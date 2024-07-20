@@ -164,3 +164,14 @@ func checkNameOverrides(fileName, srcPath, destPath string, config *config.Draft
 	}
 	return fileName
 }
+
+func CheckPath(path string) error {
+	if _, err := os.Stat(path); err != nil {
+		if os.IsNotExist(err) {
+			return fmt.Errorf("path %s does not exist", path)
+		}
+		return fmt.Errorf("checking path: %w", err)
+	} else {
+		return nil
+	}
+}

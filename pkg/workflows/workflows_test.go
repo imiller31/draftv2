@@ -86,10 +86,6 @@ func TestCreateWorkflows(t *testing.T) {
 				Name:  "NAMESPACE",
 				Value: "default",
 			},
-			{
-				Name:  "PRIVATECLUSTER",
-				Value: "false",
-			},
 		},
 	}
 	draftConfigNoRoot := &config.DraftConfig{
@@ -153,10 +149,6 @@ func TestCreateWorkflows(t *testing.T) {
 			{
 				Name:  "NAMESPACE",
 				Value: "default",
-			},
-			{
-				Name:  "PRIVATECLUSTER",
-				Value: "false",
 			},
 		},
 	}
@@ -429,10 +421,6 @@ func TestCreateWorkflowFiles(t *testing.T) {
 				Name:  "NAMESPACE",
 				Value: "default",
 			},
-			{
-				Name:  "PRIVATECLUSTER",
-				Value: "false",
-			},
 		},
 	}
 	draftConfigNoRoot := &config.DraftConfig{
@@ -488,10 +476,6 @@ func TestCreateWorkflowFiles(t *testing.T) {
 			{
 				Name:  "NAMESPACE",
 				Value: "default",
-			},
-			{
-				Name:  "PRIVATECLUSTER",
-				Value: "false",
 			},
 		},
 	}

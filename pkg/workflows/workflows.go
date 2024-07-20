@@ -38,15 +38,15 @@ const (
 func UpdateProductionDeployments(deployType, dest string, draftConfig *config.DraftConfig, templateWriter templatewriter.TemplateWriter) error {
 	acr, err := draftConfig.GetVariable("AZURECONTAINERREGISTRY")
 	if err != nil {
-		return fmt.Errorf("get variable: %w", err)
+		return fmt.Errorf("failed to get variable: %w", err)
 	}
 
-	containerName, err := draftConfig.GetVariable("CONTAINERNAME")
+	repositoryName, err := draftConfig.GetVariable("ACRREPOSITORYNAME")
 	if err != nil {
-		return fmt.Errorf("get variable: %w", err)
+		return fmt.Errorf("failed to get variable: %w", err)
 	}
 
-	productionImage := fmt.Sprintf("%s.azurecr.io/%s", acr.Value, containerName.Value)
+	productionImage := fmt.Sprintf("%s.azurecr.io/%s", acr.Value, repositoryName.Value)
 	switch deployType {
 	case "helm":
 		return setHelmContainerImage(dest+"/charts/production.yaml", productionImage, templateWriter)

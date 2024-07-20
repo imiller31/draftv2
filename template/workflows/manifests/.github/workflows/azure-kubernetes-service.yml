@@ -1,13 +1,5 @@
 # This workflow will build and push an application to a Azure Kubernetes Service (AKS) cluster when you push your code
 #
-# This workflow assumes you have already created the target AKS cluster and have created an Azure Container Registry (ACR)
-# The ACR should be attached to the AKS cluster
-# For instructions see:
-#   - https://docs.microsoft.com/en-us/azure/aks/kubernetes-walkthrough-portal
-#   - https://docs.microsoft.com/en-us/azure/container-registry/container-registry-get-started-portal
-#   - https://learn.microsoft.com/en-us/azure/aks/cluster-container-registry-integration?tabs=azure-cli#configure-acr-integration-for-existing-aks-clusters
-#   - https://github.com/Azure/aks-create-action
-#
 # To configure this workflow:
 #
 # 1. Set the following secrets in your repository (instructions for getting these can be found at https://docs.microsoft.com/en-us/azure/developer/github/connect-from-azure?tabs=azure-cli%2Clinux):
@@ -19,8 +11,7 @@
 #    - AZURE_CONTAINER_REGISTRY (name of your container registry / ACR)
 #    - RESOURCE_GROUP (where your cluster is deployed)
 #    - CLUSTER_NAME (name of your AKS cluster)
-#    - CONTAINER_NAME (name of the container image you would like to push up to your ACR)
-#    - IMAGE_PULL_SECRET_NAME (name of the ImagePullSecret that will be created to pull your ACR image)
+#    - ACR_REPOSITORY_NAME (name of the container image you would like to push up to your ACR)
 #    - DEPLOYMENT_MANIFEST_PATH (path to the manifest yaml for your deployment)
 #
 # For more information on GitHub Actions for Azure, refer to https://github.com/Azure/Actions
@@ -37,11 +28,11 @@ on:
 env:
   ACR_RESOURCE_GROUP: {{ACRRESOURCEGROUP}}
   AZURE_CONTAINER_REGISTRY: {{AZURECONTAINERREGISTRY}}
-  CONTAINER_NAME: {{CONTAINERNAME}}
+  ACR_REPOSITORY_NAME: {{ACRREPOSITORYNAME}}
   CLUSTER_RESOURCE_GROUP: {{CLUSTERRESOURCEGROUP}}
   CLUSTER_NAME: {{CLUSTERNAME}}
   DEPLOYMENT_MANIFEST_PATH: {{DEPLOYMENTMANIFESTPATH}}
-  DOCKER_FILE: {{DOCKERFILE}}
+  DOCKER_FILE_PATH: {{DOCKERFILEPATH}}
   BUILD_CONTEXT_PATH: {{BUILDCONTEXTPATH}}
   NAMESPACE: {{NAMESPACE}}
   PRIVATE_CLUSTER: {{PRIVATECLUSTER}}
@@ -67,7 +58,7 @@ jobs:
       # Builds and pushes an image up to your Azure Container Registry
       - name: Build and push image to ACR
         run: |
-          az acr build --image ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.CONTAINER_NAME }}:${{ github.sha }} --registry ${{ env.AZURE_CONTAINER_REGISTRY }} -g ${{ env.ACR_RESOURCE_GROUP }} -f ${{ env.DOCKER_FILE }} ${{ env.BUILD_CONTEXT_PATH }}
+          az acr build --image ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.ACR_REPOSITORY_NAME }}:${{ github.sha }} --registry ${{ env.AZURE_CONTAINER_REGISTRY }} -g ${{ env.ACR_RESOURCE_GROUP }} -f ${{ env.DOCKER_FILE_PATH }} ${{ env.BUILD_CONTEXT_PATH }}
   deploy:
     permissions:
       actions: read
@@ -109,7 +100,7 @@ jobs:
           action: deploy
           manifests: ${{ env.DEPLOYMENT_MANIFEST_PATH }}
           images: |
-            ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.CONTAINER_NAME }}:${{ github.sha }}
+            ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.ACR_REPOSITORY_NAME }}:${{ github.sha }}
           namespace: ${{ env.NAMESPACE }}
           private-cluster: ${{ env.PRIVATE_CLUSTER }}
           

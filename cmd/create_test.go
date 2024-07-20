@@ -152,7 +152,7 @@ func TestValidateConfigInputsToPromptsPass(t *testing.T) {
 			},
 			{
 				Name: "REQUIRED_DEFAULTED",
-				Default: config.BuilderVarDefault{
+				Default: &config.BuilderVarDefault{
 					Value: "DEFAULT_VALUE",
 				},
 			},
@@ -210,7 +210,7 @@ func (mcc *createCmd) mockDetectLanguage() (*config.DraftConfig, string, error) 
 			mcc.createConfig.LanguageType = mcc.lang
 		} else {
 			langs, err = linguist.ProcessDir(mcc.dest)
-			log.Debugf("linguist.ProcessDir(%v) result:\n\nError: %v", mcc.dest, err)
+			log.Debugf("linguist.ProcessDir(%v) result:\n", mcc.dest)
 			if err != nil {
 				return nil, "", fmt.Errorf("there was an error detecting the language: %s", err)
 			}

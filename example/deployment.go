@@ -39,7 +39,7 @@ func WriteDeploymentFilesExample() error {
 		Variables: []*config.BuilderVar{
 			{
 				Name: "PORT",
-				Default: config.BuilderVarDefault{
+				Default: &config.BuilderVarDefault{
 					Value: "80",
 				},
 				Description: "the port exposed in the application",
@@ -52,7 +52,7 @@ func WriteDeploymentFilesExample() error {
 			},
 			{
 				Name: "SERVICEPORT",
-				Default: config.BuilderVarDefault{
+				Default: &config.BuilderVarDefault{
 					ReferenceVar: "PORT",
 				},
 				Description: "the port the service uses to make the application accessible from outside the cluster",
@@ -60,7 +60,7 @@ func WriteDeploymentFilesExample() error {
 			},
 			{
 				Name: "NAMESPACE",
-				Default: config.BuilderVarDefault{
+				Default: &config.BuilderVarDefault{
 					Value: "default",
 				},
 				Description: "the name of the image to use in the deployment",
@@ -68,7 +68,7 @@ func WriteDeploymentFilesExample() error {
 			},
 			{
 				Name: "IMAGENAME",
-				Default: config.BuilderVarDefault{
+				Default: &config.BuilderVarDefault{
 					IsPromptDisabled: true,
 					Value:            "the name of the image to use in the deployment",
 				},
@@ -77,7 +77,7 @@ func WriteDeploymentFilesExample() error {
 			},
 			{
 				Name: "IMAGETAG",
-				Default: config.BuilderVarDefault{
+				Default: &config.BuilderVarDefault{
 					IsPromptDisabled: true,
 					Value:            "latest",
 				},
@@ -86,7 +86,7 @@ func WriteDeploymentFilesExample() error {
 			},
 			{
 				Name: "GENERATORLABEL",
-				Default: config.BuilderVarDefault{
+				Default: &config.BuilderVarDefault{
 					IsPromptDisabled: true,
 					Value:            "draft",
 				},

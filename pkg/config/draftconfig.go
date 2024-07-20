@@ -13,6 +13,7 @@ type DraftConfig struct {
 	NameOverrides []FileNameOverride `yaml:"nameOverrides"`
 	Variables     []*BuilderVar      `yaml:"variables"`
 
+	varIdxMap       map[string]int
 	nameOverrideMap map[string]string
 }
 
@@ -22,12 +23,13 @@ type FileNameOverride struct {
 }
 
 type BuilderVar struct {
-	Name          string            `yaml:"name"`
-	Default       BuilderVarDefault `yaml:"default"`
-	Description   string            `yaml:"description"`
-	ExampleValues []string          `yaml:"exampleValues"`
-	Type          string            `yaml:"type"`
-	Value         string            `yaml:"value"`
+	Name          string             `yaml:"name"`
+	Default       *BuilderVarDefault `yaml:"default"`
+	Description   string             `yaml:"description"`
+	ExampleValues []string           `yaml:"exampleValues"`
+	Resource      string             `yaml:"resource"`
+	Type          string             `yaml:"type"`
+	Value         string             `yaml:"value"`
 }
 
 type BuilderVarDefault struct {
@@ -89,18 +91,31 @@ func (d *DraftConfig) SetVariable(name, value string) {
 	}
 }
 
+func (b *BuilderVar) SetDefaultValue(value string) {
+	if b.Default == nil {
+		b.Default = &BuilderVarDefault{
+			Value: value,
+		}
+	}
+	b.Default.Value = value
+}
+
 // ApplyDefaultVariables will apply the defaults to variables that are not already set
 func (d *DraftConfig) ApplyDefaultVariables() error {
 	for _, variable := range d.Variables {
 		if variable.Value == "" {
+			if variable.Default == nil {
+				variable.SetDefaultValue("")
+			}
+
 			if variable.Default.ReferenceVar != "" {
 				referenceVar, err := d.GetVariable(variable.Default.ReferenceVar)
 				if err != nil {
-					return fmt.Errorf("apply default variables: %w", err)
+					return fmt.Errorf("failed to get variable: %w", err)
 				}
 				defaultVal, err := d.recurseReferenceVars(referenceVar, referenceVar, true)
 				if err != nil {
-					return fmt.Errorf("apply default variables: %w", err)
+					return fmt.Errorf("failed to recurse reference variables: %w", err)
 				}
 				log.Infof("Variable %s defaulting to value %s", variable.Name, defaultVal)
 				variable.Value = defaultVal
@@ -129,6 +144,8 @@ func (d *DraftConfig) recurseReferenceVars(referenceVar *BuilderVar, variableChe
 	// If referenceVar has a custom value, return it, else check its ReferenceVar, else return its default value
 	if referenceVar.Value != "" {
 		return referenceVar.Value, nil
+	} else if referenceVar.Default == nil {
+		referenceVar.SetDefaultValue("")
 	} else if referenceVar.Default.ReferenceVar != "" {
 		referenceVar, err := d.GetVariable(referenceVar.Default.ReferenceVar)
 		if err != nil {

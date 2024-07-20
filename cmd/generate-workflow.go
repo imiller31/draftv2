@@ -37,7 +37,7 @@ with draft on AKS. This command assumes the 'setup-gh' command has been run prop
 				return err
 			}
 
-			log.Info("Draft has successfully generated a Github workflow for your project 😃")
+			log.Info("Draft has successfully generated a Github workflow for your project under directory \".github/workflows/\" 😃")
 
 			return nil
 		},
@@ -47,7 +47,7 @@ with draft on AKS. This command assumes the 'setup-gh' command has been run prop
 
 	f.StringVarP(&gwCmd.dest, "destination", "d", currentDirDefaultFlagValue, "specify the path to the project directory")
 	f.StringVarP(&gwCmd.deployType, "deploy-type", "", "", "specify the k8s deployment type (helm, kustomize, manifests)")
-	f.StringArrayVarP(&gwCmd.flagVariables, "variable", "", []string{}, "pass template variables (e.g. --variable CLUSTERNAME=testCluster --variable DOCKERFILE=./Dockerfile)")
+	f.StringArrayVarP(&gwCmd.flagVariables, "variable", "", []string{}, "pass template variables (e.g. --variable CLUSTERNAME=testCluster --variable DOCKERFILEPATH=./Dockerfile)")
 	gwCmd.templateWriter = &writers.LocalFSWriter{}
 	return cmd
 }
@@ -86,7 +86,7 @@ func (gwc *generateWorkflowCmd) generateWorkflows() error {
 	}
 
 	if err := workflows.UpdateProductionDeployments(gwc.deployType, gwc.dest, draftConfig, gwc.templateWriter); err != nil {
-		return fmt.Errorf("update production deployments: %w", err)
+		return fmt.Errorf("failed to update production deployments: %w", err)
 	}
 
 	return workflow.CreateWorkflowFiles(gwc.deployType, draftConfig, gwc.templateWriter)

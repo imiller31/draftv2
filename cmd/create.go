@@ -261,14 +261,14 @@ func (cc *createCmd) generateDockerfile(langConfig *config.DraftConfig, lowerLan
 		for i, variable := range langConfig.Variables {
 			if k == variable.Name {
 				variableExists = true
-				langConfig.Variables[i].Default.Value = v
+				langConfig.Variables[i].SetDefaultValue(v)
 				break
 			}
 		}
 		if !variableExists {
 			langConfig.Variables = append(langConfig.Variables, &config.BuilderVar{
 				Name: k,
-				Default: config.BuilderVarDefault{
+				Default: &config.BuilderVarDefault{
 					Value: v,
 				},
 			})

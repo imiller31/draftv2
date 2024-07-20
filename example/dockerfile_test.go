@@ -25,7 +25,7 @@ func TestWriteDockerfile(t *testing.T) {
 				Variables: []*config.BuilderVar{
 					{
 						Name: "PORT",
-						Default: config.BuilderVarDefault{
+						Default: &config.BuilderVarDefault{
 							Value: "80",
 						},
 						Description: "the port exposed in the application",
@@ -34,7 +34,7 @@ func TestWriteDockerfile(t *testing.T) {
 					},
 					{
 						Name: "VERSION",
-						Default: config.BuilderVarDefault{
+						Default: &config.BuilderVarDefault{
 							Value: "1.18",
 						},
 						Description:   "the version of go used by the application",
@@ -52,7 +52,7 @@ func TestWriteDockerfile(t *testing.T) {
 				Variables: []*config.BuilderVar{
 					{
 						Name: "PORT",
-						Default: config.BuilderVarDefault{
+						Default: &config.BuilderVarDefault{
 							Value: "80",
 						},
 						Description: "the port exposed in the application",
@@ -61,7 +61,7 @@ func TestWriteDockerfile(t *testing.T) {
 					},
 					{
 						Name: "VERSION",
-						Default: config.BuilderVarDefault{
+						Default: &config.BuilderVarDefault{
 							Value: "1.18",
 						},
 						Description:   "the version of go used by the application",
@@ -78,7 +78,7 @@ func TestWriteDockerfile(t *testing.T) {
 				Variables: []*config.BuilderVar{
 					{
 						Name: "PORT",
-						Default: config.BuilderVarDefault{
+						Default: &config.BuilderVarDefault{
 							Value: "80",
 						},
 						Description: "the port exposed in the application",
@@ -87,7 +87,7 @@ func TestWriteDockerfile(t *testing.T) {
 					},
 					{
 						Name: "VERSION",
-						Default: config.BuilderVarDefault{
+						Default: &config.BuilderVarDefault{
 							Value: "1.18",
 						},
 						Description:   "the version of go used by the application",

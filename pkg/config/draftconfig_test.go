@@ -19,14 +19,14 @@ func TestApplyDefaultVariables(t *testing.T) {
 					{
 						Name:  "var1",
 						Value: "custom-value-1",
-						Default: BuilderVarDefault{
+						Default: &BuilderVarDefault{
 							Value: "default-value-1",
 						},
 					},
 					{
 						Name:  "var2",
 						Value: "custom-value-2",
-						Default: BuilderVarDefault{
+						Default: &BuilderVarDefault{
 							Value: "default-value-2",
 						},
 					},
@@ -43,13 +43,13 @@ func TestApplyDefaultVariables(t *testing.T) {
 				Variables: []*BuilderVar{
 					{
 						Name: "var1",
-						Default: BuilderVarDefault{
+						Default: &BuilderVarDefault{
 							Value: "default-value-1",
 						},
 					},
 					{
 						Name: "var2",
-						Default: BuilderVarDefault{
+						Default: &BuilderVarDefault{
 							Value: "default-value-2",
 						},
 					},
@@ -67,13 +67,13 @@ func TestApplyDefaultVariables(t *testing.T) {
 					{
 						Name:  "var1",
 						Value: "custom-value-1",
-						Default: BuilderVarDefault{
+						Default: &BuilderVarDefault{
 							Value: "default-value-1",
 						},
 					},
 					{
 						Name: "var2",
-						Default: BuilderVarDefault{
+						Default: &BuilderVarDefault{
 							Value: "default-value-2",
 						},
 					},
@@ -105,7 +105,7 @@ func TestApplyDefaultVariables(t *testing.T) {
 				Variables: []*BuilderVar{
 					{
 						Name: "var1",
-						Default: BuilderVarDefault{
+						Default: &BuilderVarDefault{
 							ReferenceVar: "var2",
 							Value:        "not-this-value",
 						},
@@ -113,7 +113,7 @@ func TestApplyDefaultVariables(t *testing.T) {
 					{
 						Name:  "var2",
 						Value: "this-value",
-						Default: BuilderVarDefault{
+						Default: &BuilderVarDefault{
 							Value: "not-this-value",
 						},
 					},
@@ -130,21 +130,21 @@ func TestApplyDefaultVariables(t *testing.T) {
 				Variables: []*BuilderVar{
 					{
 						Name: "var1",
-						Default: BuilderVarDefault{
+						Default: &BuilderVarDefault{
 							ReferenceVar: "var2",
 							Value:        "not-this-value",
 						},
 					},
 					{
 						Name: "var2",
-						Default: BuilderVarDefault{
+						Default: &BuilderVarDefault{
 							ReferenceVar: "var3",
 							Value:        "not-this-value",
 						},
 					},
 					{
 						Name: "var3",
-						Default: BuilderVarDefault{
+						Default: &BuilderVarDefault{
 							Value: "default-value-3",
 						},
 					},
@@ -162,20 +162,20 @@ func TestApplyDefaultVariables(t *testing.T) {
 				Variables: []*BuilderVar{
 					{
 						Name: "var1",
-						Default: BuilderVarDefault{
+						Default: &BuilderVarDefault{
 							ReferenceVar: "var2",
 						},
 					},
 					{
 						Name: "var2",
-						Default: BuilderVarDefault{
+						Default: &BuilderVarDefault{
 							ReferenceVar: "var1",
 						},
 					},
 				},
 			},
 			want:       map[string]string{},
-			wantErrMsg: "apply default variables: cyclical reference detected",
+			wantErrMsg: "failed to recurse reference variables: cyclical reference detected",
 		},
 	}
 	for _, tt := range tests {

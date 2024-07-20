@@ -19,13 +19,13 @@ func TestGetVariableDefaultValue(t *testing.T) {
 				Variables: []*config.BuilderVar{
 					{
 						Name: "var1",
-						Default: config.BuilderVarDefault{
+						Default: &config.BuilderVarDefault{
 							Value: "default-value-1",
 						},
 					},
 					{
 						Name: "var2",
-						Default: config.BuilderVarDefault{
+						Default: &config.BuilderVarDefault{
 							Value: "default-value-2",
 						},
 					},
@@ -50,7 +50,7 @@ func TestGetVariableDefaultValue(t *testing.T) {
 				Variables: []*config.BuilderVar{
 					{
 						Name: "var1",
-						Default: config.BuilderVarDefault{
+						Default: &config.BuilderVarDefault{
 							ReferenceVar: "var2",
 							Value:        "not-this-value",
 						},
@@ -69,14 +69,14 @@ func TestGetVariableDefaultValue(t *testing.T) {
 				Variables: []*config.BuilderVar{
 					{
 						Name: "beforeVar",
-						Default: config.BuilderVarDefault{
+						Default: &config.BuilderVarDefault{
 							ReferenceVar: "afterVar",
 							Value:        "before-default-value",
 						},
 					},
 					{
 						Name: "afterVar",
-						Default: config.BuilderVarDefault{
+						Default: &config.BuilderVarDefault{
 							Value: "not-this-value",
 						},
 					},
@@ -92,6 +92,18 @@ func TestGetVariableDefaultValue(t *testing.T) {
 			}
 		})
 	}
+}
+
+type ValidatorFunc func(string) error
+
+var validatorFuncMap = map[string]ValidatorFunc{
+	"appName":             appNameValidator,
+	"azClusterName":       validateAzClusterName,
+	"azContainerRegistry": validateAzContainerRegistry,
+	"azNamespace":         validateAzNamespace,
+	"azAcrRepositoryName": validateAzAcrRepositoryName,
+	"azResourceGroup":     validateAzResourceGroup,
+	"path":                validatePath,
 }
 
 func TestRunStringPrompt(t *testing.T) {
@@ -131,6 +143,7 @@ func TestRunStringPrompt(t *testing.T) {
 			prompt: config.BuilderVar{
 				Name:        "APPNAME",
 				Description: "app name",
+				Resource:    "appName",
 			},
 			userInputs:       []string{"\n"},
 			defaultValue:     "currentdir",
@@ -143,12 +156,94 @@ func TestRunStringPrompt(t *testing.T) {
 			prompt: config.BuilderVar{
 				Name:        "APPNAME",
 				Description: "app name",
+				Resource:    "appName",
 			},
 			userInputs:       []string{"--invalid-app-name\n"},
 			defaultValue:     "defaultApp",
 			want:             "",
 			wantErr:          true,
 			mockDirNameValue: "currentdir",
+		},
+		{
+			testName: "invalidClusterName",
+			prompt: config.BuilderVar{
+				Name:        "CLUSTERNAME",
+				Description: "the Kubernetes cluster's name",
+				Resource:    "azClusterName",
+			},
+			userInputs:       []string{"invalidclusternam-\n"},
+			defaultValue:     "",
+			want:             "",
+			wantErr:          true,
+			mockDirNameValue: "",
+		},
+		{
+			testName: "invalidAzureContainerRegistry",
+			prompt: config.BuilderVar{
+				Name:        "AZURECONTAINERREGISTRY",
+				Description: "the Azure container registry's name",
+				Resource:    "azContainerRegistry",
+			},
+			userInputs:       []string{"invalidcontainerregistrY\n"},
+			defaultValue:     "",
+			want:             "",
+			wantErr:          true,
+			mockDirNameValue: "",
+		},
+		{
+			testName: "invalidNamespace",
+			prompt: config.BuilderVar{
+				Name: "NAMESPACE",
+				Default: &config.BuilderVarDefault{
+					Value: "default",
+				},
+				Description: "the Kubernetes namespace",
+				Resource:    "azNamespace",
+			},
+			userInputs:       []string{"invalidname$pace\n"},
+			defaultValue:     "default",
+			want:             "",
+			wantErr:          true,
+			mockDirNameValue: "",
+		},
+		{
+			testName: "invalidAcrRepositoryName",
+			prompt: config.BuilderVar{
+				Name:        "ACRREPOSITORYNAME",
+				Description: "the ACR repository's name for your container image",
+				Resource:    "azAcrRepositoryName",
+			},
+			userInputs:       []string{"invalidrepositorynamE\n"},
+			defaultValue:     "",
+			want:             "",
+			wantErr:          true,
+			mockDirNameValue: "",
+		},
+		{
+			testName: "invalidResourceGroup",
+			prompt: config.BuilderVar{
+				Name:        "RESOURCEGROUP",
+				Description: "the Azure resource group",
+				Resource:    "azResourceGroup",
+			},
+			userInputs:       []string{"invalidresourcegrou.\n"},
+			defaultValue:     "",
+			want:             "",
+			wantErr:          true,
+			mockDirNameValue: "",
+		},
+		{
+			testName: "invalidPath",
+			prompt: config.BuilderVar{
+				Name:        "PATH",
+				Description: "the path to the application",
+				Resource:    "path",
+			},
+			userInputs:       []string{"prompts_test.yo\n"},
+			defaultValue:     "",
+			want:             "",
+			wantErr:          true,
+			mockDirNameValue: "",
 		},
 	}
 
@@ -175,7 +270,7 @@ func TestRunStringPrompt(t *testing.T) {
 					t.Errorf("Error closing inWriter: %v", err)
 				}
 			}()
-			got, err := RunDefaultableStringPrompt(tt.defaultValue, &tt.prompt, nil, inReader, nil)
+			got, err := RunDefaultableStringPrompt(tt.defaultValue, &tt.prompt, validatorFuncMap[tt.prompt.Resource], inReader, nil)
 
 			if (err != nil) != tt.wantErr {
 				t.Errorf("RunDefaultableStringPrompt() error = %v, wantErr %v", err, tt.wantErr)
@@ -203,7 +298,7 @@ func TestRunPromptsFromConfigWithSkipsIO(t *testing.T) {
 				Variables: []*config.BuilderVar{
 					{
 						Name: "var1",
-						Default: config.BuilderVarDefault{
+						Default: &config.BuilderVarDefault{
 							IsPromptDisabled: true,
 							Value:            "defaultValue",
 						},
@@ -222,7 +317,7 @@ func TestRunPromptsFromConfigWithSkipsIO(t *testing.T) {
 				Variables: []*config.BuilderVar{
 					{
 						Name: "var1-no-prompt",
-						Default: config.BuilderVarDefault{
+						Default: &config.BuilderVarDefault{
 							IsPromptDisabled: true,
 							Value:            "defaultValueNoPrompt1",
 						},
@@ -230,14 +325,14 @@ func TestRunPromptsFromConfigWithSkipsIO(t *testing.T) {
 					},
 					{
 						Name: "var2-default",
-						Default: config.BuilderVarDefault{
+						Default: &config.BuilderVarDefault{
 							Value: "defaultValue2",
 						},
 						Description: "var2 has a default value and will receive an empty value, so it should use the default value",
 					},
 					{
 						Name: "var3-no-prompt",
-						Default: config.BuilderVarDefault{
+						Default: &config.BuilderVarDefault{
 							IsPromptDisabled: true,
 							Value:            "defaultValueNoPrompt3",
 						},
@@ -245,7 +340,7 @@ func TestRunPromptsFromConfigWithSkipsIO(t *testing.T) {
 					},
 					{
 						Name: "var4",
-						Default: config.BuilderVarDefault{
+						Default: &config.BuilderVarDefault{
 							Value: "defaultValue4",
 						},
 						Description: "var4 has a default value, but has a value entered, so it should use the entered value",

@@ -24,7 +24,7 @@ func TestWriteDeploymentFiles(t *testing.T) {
 				Variables: []*config.BuilderVar{
 					{
 						Name: "PORT",
-						Default: config.BuilderVarDefault{
+						Default: &config.BuilderVarDefault{
 							Value: "80",
 						},
 						Description: "the port exposed in the application",
@@ -37,7 +37,7 @@ func TestWriteDeploymentFiles(t *testing.T) {
 					},
 					{
 						Name: "SERVICEPORT",
-						Default: config.BuilderVarDefault{
+						Default: &config.BuilderVarDefault{
 							ReferenceVar: "PORT",
 						},
 						Description: "the port the service uses to make the application accessible from outside the cluster",
@@ -45,7 +45,7 @@ func TestWriteDeploymentFiles(t *testing.T) {
 					},
 					{
 						Name: "NAMESPACE",
-						Default: config.BuilderVarDefault{
+						Default: &config.BuilderVarDefault{
 							Value: "default",
 						},
 						Description: "the name of the image to use in the deployment",
@@ -53,7 +53,7 @@ func TestWriteDeploymentFiles(t *testing.T) {
 					},
 					{
 						Name: "IMAGENAME",
-						Default: config.BuilderVarDefault{
+						Default: &config.BuilderVarDefault{
 							IsPromptDisabled: true,
 							Value:            "the name of the image to use in the deployment",
 						},
@@ -62,7 +62,7 @@ func TestWriteDeploymentFiles(t *testing.T) {
 					},
 					{
 						Name: "IMAGETAG",
-						Default: config.BuilderVarDefault{
+						Default: &config.BuilderVarDefault{
 							IsPromptDisabled: true,
 							Value:            "latest",
 						},
@@ -71,7 +71,7 @@ func TestWriteDeploymentFiles(t *testing.T) {
 					},
 					{
 						Name: "GENERATORLABEL",
-						Default: config.BuilderVarDefault{
+						Default: &config.BuilderVarDefault{
 							IsPromptDisabled: true,
 							Value:            "draft",
 						},
@@ -88,7 +88,7 @@ func TestWriteDeploymentFiles(t *testing.T) {
 				Variables: []*config.BuilderVar{
 					{
 						Name: "PORT",
-						Default: config.BuilderVarDefault{
+						Default: &config.BuilderVarDefault{
 							Value: "80",
 						},
 						Description: "the port exposed in the application",
@@ -100,21 +100,21 @@ func TestWriteDeploymentFiles(t *testing.T) {
 					},
 					{
 						Name: "SERVICEPORT",
-						Default: config.BuilderVarDefault{
+						Default: &config.BuilderVarDefault{
 							ReferenceVar: "PORT",
 						},
 						Description: "the port the service uses to make the application accessible from outside the cluster",
 					},
 					{
 						Name: "NAMESPACE",
-						Default: config.BuilderVarDefault{
+						Default: &config.BuilderVarDefault{
 							Value: "default",
 						},
 						Description: "the name of the image to use in the deployment",
 					},
 					{
 						Name: "IMAGENAME",
-						Default: config.BuilderVarDefault{
+						Default: &config.BuilderVarDefault{
 							IsPromptDisabled: true,
 							Value:            "the name of the image to use in the deployment",
 						},
@@ -122,7 +122,7 @@ func TestWriteDeploymentFiles(t *testing.T) {
 					},
 					{
 						Name: "IMAGETAG",
-						Default: config.BuilderVarDefault{
+						Default: &config.BuilderVarDefault{
 							IsPromptDisabled: true,
 							Value:            "latest",
 						},
@@ -130,7 +130,7 @@ func TestWriteDeploymentFiles(t *testing.T) {
 					},
 					{
 						Name: "GENERATORLABEL",
-						Default: config.BuilderVarDefault{
+						Default: &config.BuilderVarDefault{
 							IsPromptDisabled: true,
 							Value:            "draft",
 						},

@@ -5,6 +5,7 @@ variables:
     description: "the port exposed in the application"
   - name: "APPNAME"
     description: "the name of the application"
+    resource: "appName"
   - name: "SERVICEPORT"
     default:
       referenceVar: "PORT"
