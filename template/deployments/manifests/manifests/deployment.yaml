@@ -22,3 +22,6 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: {{.PORT}}
+          envFrom:
+            - configMapRef:
+                name: envvars-configmap

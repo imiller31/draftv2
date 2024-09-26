@@ -217,7 +217,7 @@ func TestReplaceGoTemplateVariables(t *testing.T) {
 		name          string
 		fileSys       fs.FS
 		srcPath       string
-		variableMap   map[string]string
+		variableMap   map[string]interface{}
 		expected      string
 		expectedError bool
 	}{
@@ -227,7 +227,7 @@ func TestReplaceGoTemplateVariables(t *testing.T) {
 				"template.txt": &fstest.MapFile{Data: []byte("Hello, {{.Name}}!")},
 			},
 			srcPath:       "template.txt",
-			variableMap:   map[string]string{"Name": "Joe"},
+			variableMap:   map[string]interface{}{"Name": "Joe"},
 			expected:      "Hello, Joe!",
 			expectedError: false,
 		},
@@ -237,7 +237,7 @@ func TestReplaceGoTemplateVariables(t *testing.T) {
 				"template.txt": &fstest.MapFile{Data: []byte("Hello, {{.Name}}!")},
 			},
 			srcPath:       "template.txt",
-			variableMap:   map[string]string{},
+			variableMap:   map[string]interface{}{},
 			expected:      "",
 			expectedError: true,
 		},
@@ -247,7 +247,7 @@ func TestReplaceGoTemplateVariables(t *testing.T) {
 				"template.txt": &fstest.MapFile{Data: []byte("Hello, {{.Name}}!")},
 			},
 			srcPath:       "nonexistent.txt",
-			variableMap:   map[string]string{"Name": "Joe"},
+			variableMap:   map[string]interface{}{"Name": "Joe"},
 			expected:      "",
 			expectedError: true,
 		},
@@ -257,7 +257,7 @@ func TestReplaceGoTemplateVariables(t *testing.T) {
 				"template.txt": &fstest.MapFile{Data: []byte("Hello, {{.Name}} and {{.Place}}!")},
 			},
 			srcPath:       "template.txt",
-			variableMap:   map[string]string{"Name": "Joe"},
+			variableMap:   map[string]interface{}{"Name": "Joe"},
 			expected:      "",
 			expectedError: true,
 		},

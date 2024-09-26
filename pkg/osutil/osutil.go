@@ -213,7 +213,7 @@ func CopyDirWithTemplates(
 	return nil
 }
 
-func replaceGoTemplateVariables(fileSys fs.FS, srcPath string, variableMap map[string]string) ([]byte, error) {
+func replaceGoTemplateVariables(fileSys fs.FS, srcPath string, variableMap map[string]interface{}) ([]byte, error) {
 	file, err := fs.ReadFile(fileSys, srcPath)
 	if err != nil {
 		return nil, err
