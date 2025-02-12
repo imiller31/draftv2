@@ -70,7 +70,7 @@ variables:
     kind: "kubernetesResourceRequest"
     default:
       disablePrompt: true
-      value: "1"
+      value: "0.5"
     description: "resource request for CPU"
     versions: ">=0.0.1"
   - name: "MEMREQ"
@@ -78,7 +78,7 @@ variables:
     kind: "kubernetesResourceRequest"
     default:
       disablePrompt: true
-      value: "1Gi"
+      value: "0.5Gi"
     description: "resource request for Memory"
     versions: ">=0.0.1"
   - name: "CPULIMIT"
@@ -122,7 +122,7 @@ variables:
     kind: "kubernetesProbePeriod"
     default:
       disablePrompt: true
-      value: 1
+      value: 10
     description: "kubernetes startup probe period in seconds"
     versions: ">=0.0.1"
   - name: "STARTUPTIMEOUT"
@@ -130,7 +130,7 @@ variables:
     kind: "kubernetesProbeTimeout"
     default:
       disablePrompt: true
-      value: 3
+      value: 1
     description: "kubernetes startup probe timeout in seconds"
     versions: ">=0.0.1"
   - name: "STARTUPFAILURETHRESHOLD"
@@ -138,7 +138,7 @@ variables:
     kind: "kubernetesProbeThreshold"
     default:
       disablePrompt: true
-      value: 1
+      value: 3
     description: "kubernetes startup probe failure threshold"
     versions: ">=0.0.1"
   - name: "STARTUPSUCCESSTHRESHOLD"
@@ -154,7 +154,7 @@ variables:
     kind: "kubernetesProbeDelay"
     default:
       disablePrompt: true
-      value: 5
+      value: 0
     description: "kubernetes startup probe initial delay in seconds"
     versions: ">=0.0.1"
   - name: "READINESSPERIOD"
