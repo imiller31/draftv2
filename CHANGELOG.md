@@ -1,5 +1,36 @@
 # Change Log
 
+## [0.17.4] - 2025-02-05
+
+### Added
+
+- [483](https://github.com/Azure/draft/pull/483) Allow user to select language via prompt if none detected
+- [486](https://github.com/Azure/draft/pull/486) Uses the default k8s probe values instead of overriding them on tests
+- [495](https://github.com/Azure/draft/pull/495) Adds private cluster support for namespace creation/validation in workflow templates
+- [497](https://github.com/Azure/draft/pull/497) Reduce base resource requests to 0.5Gi and 0.5 cpu
+
+## [0.17.3] - 2025-01-30
+
+## Fixed
+
+- [482](https://github.com/Azure/draft/pull/482) Removed extra parentheses in the helm workflow template
+
+## [0.17.2] - 2025-01-27
+
+### Added
+
+- [476](https://github.com/Azure/draft/pull/476) Added default value for CLUSTERRESOURCETYPE in draft.yaml
+
+### Fixed
+
+- [477](https://github.com/Azure/draft/pull/477) Explicitly require jobs for each language to allow failure to be reported and prevent PR merging in case of a failure
+- [479](https://github.com/Azure/draft/pull/479) Remove helm `wait` flag for fleet clusters
+
+## [0.17.1] - 2025-01-24
+
+### Added
+- [#447](https://github.com/Azure/draft/pull/447) Add fleet support to workflows, (pending cli implementation). Bump k8s-deploy to v5
+
 ## [0.17.0] - 2024-12-10
 
 ### Added

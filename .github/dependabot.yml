@@ -20,3 +20,9 @@ updates:
     directory: "/template/workflows/manifests/.github/workflows"
     schedule:
       interval: "weekly"
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"

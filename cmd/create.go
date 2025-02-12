@@ -7,22 +7,22 @@ import (
 	"os"
 	"strings"
 
-	"gopkg.in/yaml.v3"
-
-	"github.com/Azure/draft/pkg/handlers"
-	"github.com/Azure/draft/pkg/reporeader"
-	"github.com/Azure/draft/pkg/reporeader/readers"
 	"github.com/manifoldco/promptui"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"gopkg.in/yaml.v3"
 
 	"github.com/Azure/draft/pkg/config"
 	dryrunpkg "github.com/Azure/draft/pkg/dryrun"
 	"github.com/Azure/draft/pkg/filematches"
+	"github.com/Azure/draft/pkg/handlers"
 	"github.com/Azure/draft/pkg/linguist"
 	"github.com/Azure/draft/pkg/prompts"
+	"github.com/Azure/draft/pkg/reporeader"
+	"github.com/Azure/draft/pkg/reporeader/readers"
 	"github.com/Azure/draft/pkg/templatewriter"
 	"github.com/Azure/draft/pkg/templatewriter/writers"
+	"github.com/Azure/draft/template"
 )
 
 // ErrNoLanguageDetected is raised when `draft create` does not detect source
@@ -36,6 +36,22 @@ const TWO_SPACES = "  "
 // Flag defaults
 const emptyDefaultFlagValue = ""
 const currentDirDefaultFlagValue = "."
+
+const DOCKERFILES_DIR = "dockerfiles"
+
+func listSupportedLanguages() ([]string, error) {
+	var supportedLanguages []string
+	entries, err := template.Templates.ReadDir(DOCKERFILES_DIR)
+	if err != nil {
+		return supportedLanguages, fmt.Errorf("reading supported languages from embedded fs: %w", err)
+	}
+	for _, d := range entries {
+		if d.IsDir() {
+			supportedLanguages = append(supportedLanguages, d.Name())
+		}
+	}
+	return supportedLanguages, nil
+}
 
 type createCmd struct {
 	lang       string
@@ -152,6 +168,11 @@ func (cc *createCmd) detectLanguage() (*handlers.Template, string, error) {
 	hasGoMod := false
 	var langs []*linguist.Language
 	var err error
+	supportedLanguages, err := listSupportedLanguages()
+	if err != nil {
+		log.Errorf("loading supported languages: %s", err.Error())
+	}
+	log.Debugf("loaded supported languages: %v", supportedLanguages)
 	if cc.createConfig.LanguageType == "" {
 		if cc.lang != "" {
 			cc.createConfig.LanguageType = cc.lang
@@ -161,6 +182,12 @@ func (cc *createCmd) detectLanguage() (*handlers.Template, string, error) {
 			log.Debugf("linguist.ProcessDir(%v) result:\n\nError: %v", cc.dest, err)
 			if err != nil {
 				return nil, "", fmt.Errorf("there was an error detecting the language: %s", err)
+			}
+			if len(langs) == 0 {
+				langs, err = promptLanguageSelection(supportedLanguages)
+				if err != nil {
+					return nil, "", fmt.Errorf("prompting for language: %w", err)
+				}
 			}
 			for _, lang := range langs {
 				log.Debugf("%s:\t%f (%s)", lang.Language, lang.Percent, lang.Color)
@@ -461,4 +488,17 @@ func validateConfigInputsToPrompts(draftConfig *config.DraftConfig, provided []U
 	}
 
 	return nil
+}
+
+func promptLanguageSelection(supportedLanguages []string) ([]*linguist.Language, error) {
+	selection := &promptui.Select{
+		Label: "Unable to detect a supported language, please select one:",
+		Items: supportedLanguages,
+	}
+	_, selectResponse, err := selection.Run()
+	if err != nil {
+		return nil, fmt.Errorf("manually selecting language: %w", err)
+	}
+	langs := []*linguist.Language{{Language: selectResponse}}
+	return langs, nil
 }

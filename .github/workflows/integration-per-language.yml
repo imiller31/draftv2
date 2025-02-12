@@ -14,13 +14,13 @@ jobs:
   helm-dry-run:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
         with:
           name: draft-binary
       - run: chmod +x ./draft
       - run: mkdir ./langtest
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           repository: ${{ inputs.repo }}
           path: ./langtest
@@ -69,13 +69,13 @@ jobs:
       serviceport: 80
       ingress_test_args: "-a webapp_routing --variable ingress-tls-cert-keyvault-uri=test.cert.keyvault.uri --variable ingress-use-osm-mtls=true --variable ingress-host=host1"
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
         with:
           name: draft-binary
       - run: chmod +x ./draft
       - run: mkdir ./langtest
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           repository: ${{ inputs.repo }}
           path: ./langtest
@@ -158,7 +158,6 @@ jobs:
           --variable CONTAINERNAME=someContainer \
           --variable CLUSTERRESOURCEGROUP=someClusterResourceGroup \
           --variable CLUSTERNAME=someAksCluster \
-          --variable CLUSTERRESOURCETYPE=Microsoft.ContainerService/managedClusters \
           --variable DOCKERFILE=./Dockerfile \
           --variable BUILDCONTEXTPATH=. \
           --variable NAMESPACE=default
@@ -192,8 +191,8 @@ jobs:
   kustomize-dry-run:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
         with:
           name: draft-binary
       - run: chmod +x ./draft
@@ -247,8 +246,8 @@ jobs:
       serviceport: 80
       ingress_test_args: "-a webapp_routing --variable ingress-tls-cert-keyvault-uri=test.cert.keyvault.uri --variable ingress-use-osm-mtls=true --variable ingress-host=host1"
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
         with:
           name: draft-binary
       - run: chmod +x ./draft
@@ -332,7 +331,6 @@ jobs:
           --variable CONTAINERNAME=someContainer \
           --variable CLUSTERRESOURCEGROUP=someClusterResourceGroup \
           --variable CLUSTERNAME=someAksCluster \
-          --variable CLUSTERRESOURCETYPE=Microsoft.ContainerService/managedClusters \
           --variable DOCKERFILE=./Dockerfile \
           --variable BUILDCONTEXTPATH=. \
           --variable NAMESPACE=default
@@ -364,13 +362,13 @@ jobs:
   manifests-dry-run:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
         with:
           name: draft-binary
       - run: chmod +x ./draft
       - run: mkdir ./langtest
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           repository: ${{ inputs.repo }}
           path: ./langtest
@@ -419,13 +417,13 @@ jobs:
       serviceport: 80
       ingress_test_args: "-a webapp_routing --variable ingress-tls-cert-keyvault-uri=test.cert.keyvault.uri --variable ingress-use-osm-mtls=true --variable ingress-host=host1"
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
         with:
           name: draft-binary
       - run: chmod +x ./draft
       - run: mkdir ./langtest
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           repository: ${{ inputs.repo }}
           path: ./langtest
@@ -486,7 +484,20 @@ jobs:
           curl -m 3 $SERVICEIP:${{env.serviceport}}
           sleep 5
           kill $tunnelPID
-      - run: ./draft -v generate-workflow -d ./langtest/ --deploy-type manifests --variable WORKFLOWNAME=someWorkflow --variable BRANCHNAME=main --variable ACRRESOURCEGROUP=someAcrResourceGroup --variable AZURECONTAINERREGISTRY=someRegistry --variable CONTAINERNAME=someContainer --variable CLUSTERRESOURCEGROUP=someClusterResourceGroup --variable CLUSTERNAME=someAksCluster --variable CLUSTERRESOURCETYPE=Microsoft.ContainerService/managedClusters --variable DOCKERFILE=./Dockerfile --variable BUILDCONTEXTPATH=. --variable NAMESPACE=default
+      - run: |
+          ./draft -v generate-workflow \
+          -d ./langtest/ \
+          --deploy-type manifests \
+          --variable WORKFLOWNAME=someWorkflow \
+          --variable BRANCHNAME=main \
+          --variable ACRRESOURCEGROUP=someAcrResourceGroup \
+          --variable AZURECONTAINERREGISTRY=someRegistry \
+          --variable CONTAINERNAME=someContainer \
+          --variable CLUSTERRESOURCEGROUP=someClusterResourceGroup \
+          --variable CLUSTERNAME=someAksCluster \
+          --variable DOCKERFILE=./Dockerfile \
+          --variable BUILDCONTEXTPATH=. \
+          --variable NAMESPACE=default
       # Validate generated workflow yaml
       - name: Install action-validator with asdf
         uses: asdf-vm/actions/install@v1
@@ -497,7 +508,7 @@ jobs:
         run: |
           find ./langtest/.github/workflows -type f \( -iname \*.yaml -o -iname \*.yml \) \
             | xargs -I {} action-validator --verbose {}
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
         with:
           name: ${{inputs.language}}-manifests-create
           path: |
@@ -517,12 +528,12 @@ jobs:
         ports:
           - 5000:5000
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
         with:
           name: draft-binary
       - run: chmod +x ./draft
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
         with:
           name: ${{inputs.language}}-manifests-create
           path: ./langtest/
@@ -559,12 +570,12 @@ jobs:
   win-helm-create:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
         with:
           name: draft-binary-win
       - run: mkdir ./langtest
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           repository: ${{ inputs.repo }}
           path: ./langtest
@@ -591,7 +602,7 @@ jobs:
     needs: win-helm-create
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
         with:
           name: draft-binary-win
@@ -610,12 +621,12 @@ jobs:
   win-kustomize-create:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
         with:
           name: draft-binary-win
       - run: mkdir ./langtest
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           repository: ${{ inputs.repo }}
           path: ./langtest

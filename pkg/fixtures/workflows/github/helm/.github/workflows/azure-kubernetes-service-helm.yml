@@ -113,17 +113,6 @@ jobs:
           admin: "false"
           use-kubelogin: "true"
 
-      # Create Namespace
-      - name: Create Namespace
-        if: ${{ env.ENABLENAMESPACECREATION == 'true' }}
-        run: |
-          kubectl get namespace ${{ env.NAMESPACE }} || kubectl create namespace ${{ env.NAMESPACE }}
-
-      # Validate Namespace exists
-      - name: Validate Namespace Exists
-        run: |
-          kubectl get namespace ${{ env.NAMESPACE }}
-
       # Checks if the AKS cluster is private
       - name: Is private cluster
         id: isPrivate
@@ -131,6 +120,37 @@ jobs:
         run: |
           result=$(az aks show --resource-group ${{ env.CLUSTER_RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }} --query "apiServerAccessProfile.enablePrivateCluster")
           echo "PRIVATE_CLUSTER=$result" >> "$GITHUB_OUTPUT"
+
+      # Create Namespace
+      - name: Create Namespace
+        if: ${{ env.ENABLENAMESPACECREATION == 'true' }}
+        run: |
+          if [ ${{ steps.isPrivate.outputs.PRIVATE_CLUSTER}} == 'true' ]; then
+            command_id=$(az aks command invoke --resource-group ${{ env.CLUSTER_RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }} --command "kubectl get namespace ${{ env.NAMESPACE }} || kubectl create namespace ${{ env.NAMESPACE }}" --query id -o tsv)
+            result=$(az aks command result --resource-group ${{ env.CLUSTER_RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }} --command-id $command_id)
+            echo "Command Result: $result"
+            exitCode=$(az aks command result --resource-group ${{ env.CLUSTER_RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }} --command-id $command_id --query exitCode -o tsv)
+            if [ $exitCode -ne 0 ]; then
+              exit $exitCode
+            fi
+          else
+            kubectl get namespace ${{ env.NAMESPACE }} || kubectl create namespace ${{ env.NAMESPACE }}
+          fi
+
+      # Validate Namespace exists
+      - name: Validate Namespace Exists
+        run: |
+          if [ ${{ steps.isPrivate.outputs.PRIVATE_CLUSTER}} == 'true' ]; then
+            command_id=$(az aks command invoke --resource-group ${{ env.CLUSTER_RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }} --command "kubectl get namespace ${{ env.NAMESPACE }}" --query id -o tsv)
+            result=$(az aks command result --resource-group ${{ env.CLUSTER_RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }} --command-id $command_id)
+            echo "Command Result: $result"
+            exitCode=$(az aks command result --resource-group ${{ env.CLUSTER_RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }} --command-id $command_id --query exitCode -o tsv)
+            if [ $exitCode -ne 0 ]; then
+              exit $exitCode
+            fi
+          else
+            kubectl get namespace ${{ env.NAMESPACE }}
+          fi
 
       # Deploys application
       - name: Deploy application on private cluster
@@ -140,12 +160,14 @@ jobs:
           result=$(az aks command result --resource-group ${{ env.CLUSTER_RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }} --command-id $command_id)
           echo "Helm upgrade result: $result"
           exitCode=$(az aks command result --resource-group ${{ env.CLUSTER_RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }} --command-id $command_id --query exitCode -o tsv)
-          
+
           if [ $exitCode -ne 0 ]; then
             exit $exitCode
           fi
 
       - name: Deploy application on public cluster
         if: ${{ steps.isPrivate.outputs.PRIVATE_CLUSTER != 'true' }}
+        env:
+          WAIT_FLAG: ${{ (env.CLUSTER_RESOURCE_TYPE != 'Microsoft.ContainerService/fleets') && '--wait' || '' }} # don't wait for fleet hubs
         run: |
-          helm upgrade --wait -i -f ${{ env.CHART_OVERRIDE_PATH }} --set ${{ env.CHART_OVERRIDES }} --set image.tag=${{ github.sha }} automated-deployment ${{ env.CHART_PATH }} --namespace ${{ env.NAMESPACE }}
+          helm upgrade ${{ env.WAIT_FLAG }} -i -f ${{ env.CHART_OVERRIDE_PATH }} --set ${{ env.CHART_OVERRIDES }} --set image.tag=${{ github.sha }} automated-deployment ${{ env.CHART_PATH }} --namespace ${{ env.NAMESPACE }}

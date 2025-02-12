@@ -94,3 +94,11 @@ variables:
       value: "false"
     description: "enable creation of target namespace if it does not exist"
     versions: ">=0.0.1"
+  - name: "CLUSTERRESOURCETYPE" 
+    type: "string"
+    kind: "clusterResourceType"
+    default:
+      disablePrompt: true
+      value: "Microsoft.ContainerService/managedClusters"
+    description: "ARM resource type for cluster"
+    versions: ">=0.0.1"

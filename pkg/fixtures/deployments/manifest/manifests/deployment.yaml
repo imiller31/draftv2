@@ -24,8 +24,8 @@ spec:
             - containerPort: 80
           resources:
             requests:
-              cpu: "1"
-              memory: "1Gi"
+              cpu: "0.5"
+              memory: "0.5Gi"
             limits:
               cpu: "1"
               memory: "1Gi"
@@ -49,11 +49,11 @@ spec:
           startupProbe:
             tcpSocket:
               port: 80
-            periodSeconds: 1
-            timeoutSeconds: 3
-            failureThreshold: 1
+            periodSeconds: 10
+            timeoutSeconds: 1
+            failureThreshold: 3
             successThreshold: 1
-            initialDelaySeconds: 5
+            initialDelaySeconds: 0
           securityContext:
             seccompProfile:
               type: RuntimeDefault

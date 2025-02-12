@@ -39,6 +39,7 @@ var validVariableKinds = map[string]bool{
 	"azureServiceConnection":     true,
 	"containerImageName":         true,
 	"containerImageVersion":      true,
+	"clusterResourceType":        true,
 	"dirPath":                    true,
 	"dockerFileName":             true,
 	"envVarMap":                  true,
