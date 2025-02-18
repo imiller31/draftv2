@@ -10,6 +10,7 @@ variables:
   clusterName: testcluster
   manifestPath: ./manifests
   namespace: default
+  resourceType: Microsoft.ContainerService/fleets
   tag: "$(Build.BuildId)"
   vmImageName: "ubuntu-latest"
 
@@ -56,5 +57,6 @@ stages:
               kubernetesCluster: $(clusterName)
               manifests: $(manifestPath)
               namespace: $(namespace)
+              resource-type: $(resourceType)
               containers: |
                 $(azureContainerRegistry).azurecr.io/$(containerName):$(tag)

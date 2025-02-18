@@ -10,6 +10,7 @@ variables:
   clusterName: {{ .Config.GetVariableValue "CLUSTERNAME" }}
   manifestPath: {{ .Config.GetVariableValue "MANIFESTPATH" }}
   namespace: {{ .Config.GetVariableValue "NAMESPACE" }}
+  resourceType: {{ .Config.GetVariableValue "RESOURCETYPE" }}
   tag: "$(Build.BuildId)"
   vmImageName: "ubuntu-latest"
 
@@ -56,6 +57,7 @@ stages:
               kubernetesCluster: $(clusterName)
               manifests: $(manifestPath)
               namespace: $(namespace)
+              resource-type: $(resourceType)
               containers: |
                 $(azureContainerRegistry).azurecr.io/$(containerName):$(tag)
 `}}

@@ -22,6 +22,7 @@ func TestAzureWorkflowManifestTemplates(t *testing.T) {
 				"CLUSTERRESOURCEGROUP":   "myrg",
 				"ACRRESOURCEGROUP":       "myrg",
 				"CLUSTERNAME":            "testcluster",
+				"RESOURCETYPE":           "Microsoft.ContainerService/fleets",
 			},
 		},
 	}
